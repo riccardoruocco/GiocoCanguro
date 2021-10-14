@@ -23,12 +23,36 @@ func playSound(_ fileName : String) {
     }
 }
 
+extension UIImage {
+    func rotate(radians: Float) -> UIImage? {
+        var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size
+        // Trim off the extremely small float value to prevent core graphics from rounding it up
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, self.scale)
+        let context = UIGraphicsGetCurrentContext()!
+
+        // Move origin to middle
+        context.translateBy(x: newSize.width/2, y: newSize.height/2)
+        // Rotate around middle
+        context.rotate(by: CGFloat(radians))
+        // Draw the image at its center
+        self.draw(in: CGRect(x: -self.size.width/2, y: -self.size.height/2, width: self.size.width, height: self.size.height))
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+}
+
 struct Scena: View{
     
         @State  var positionXCanguro: CGFloat = 250
         @State  var positionYCanguro: CGFloat = 450
         @State  var positionXBackground: CGFloat = 400
-        @State var positionYBackground: CGFloat=200
+        @State var positionYBackground: CGFloat=374
         @State var positionXNemico: CGFloat=1000
         @State var positionYNemico: CGFloat = 450
         @State  var OpacityKangooS:Double=1
@@ -46,10 +70,10 @@ struct Scena: View{
     
     var body: some View{
         ZStack{
-               Image(uiImage: UIImage(named: "sunset")!)
+               Image(uiImage: UIImage(named: "sunset2")!)
                    .resizable()
                    .scaledToFill()
-                   .frame(width: 768, height: 1024, alignment: .center)
+                   .frame(width: 561, height: 748, alignment: .center)
                    .position(x: positionXBackground, y: positionYBackground)
                 
                    Image(uiImage: UIImage(named: "KangooS")!)
@@ -81,6 +105,26 @@ struct Scena: View{
                         }
                     }
             
+                    Image(uiImage: UIImage(named: "kangooP1")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 100, alignment: .center)
+                    .position(x: positionXCanguro, y: positionYCanguro)
+                    .opacity(OpacityKangooP1)
+                    .onChange(of: OpacityKangooP1){
+                        newValue in OpacityKangooP1
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(1500)){
+                                OpacityKangooP1=0
+                                OpacityKangooS=1
+                        }
+                    }
+                    
+                    Image(uiImage: UIImage(named: "kangooP2")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 100, alignment: .center)
+                    .position(x: positionXCanguro, y: positionYCanguro)
+                    .opacity(OpacityKangooP2)
             
                     Image(uiImage: UIImage(named: "soldato")!)
                     .resizable()
@@ -164,8 +208,23 @@ struct Scena: View{
                            }
                        }
                        .buttonStyle(.borderedProminent)
+                       Button("Punch"){
+                           if(OpacityKangooS==1)
+                           {
+                               OpacityKangooS=0
+                               OpacityKangooP1=1
+                               
+                           }
+                           else if(OpacityKangooP1==1){
+                               OpacityKangooP1=0
+                               OpacityKangooS=1
+                           }
+                         
+                       }
+                       .buttonStyle(.borderedProminent)
 
                    }
+                   .offset(y: 200)
                    
                    Spacer()
                    Spacer()
