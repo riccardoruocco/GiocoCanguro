@@ -29,16 +29,14 @@ struct Scena: View{
         @State  var positionYCanguro: CGFloat = 450
         @State  var positionXBackground: CGFloat = 400
         @State var positionYBackground: CGFloat=200
-        @State var positionXNemico: CGFloat=1000
-        @State var positionYNemico: CGFloat = 450
         @State  var OpacityKangooS:Double=1
         @State  var OpacityKangooW:Double=0
         @State  var OpacityKangooJ:Double=0
         @State  var OpacityKangooP1:Double=0
         @State  var OpacityKangooP2:Double=0
-        @State  var OpacitySoldato:Double=1
         @State var OpacityPerso:Double=0
-        @State var NumeroNemici=3
+        @State var PositionYBoss:Double=200
+
         @State var isAlive=true
     
         let passo:CGFloat=70
@@ -102,42 +100,22 @@ struct Scena: View{
                     .position(x: positionXCanguro, y: positionYCanguro)
                     .opacity(OpacityKangooP2)
             
-                    Image(uiImage: UIImage(named: "soldato")!)
+                    Image(uiImage: UIImage(named: "boss")!)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 50, height: 100, alignment: .center)
-                    .position(x: positionXNemico, y: positionYCanguro)
-                    .opacity(OpacitySoldato)
+                    .frame(width: 100, height: 100, alignment: .center)
+                    .position(x: 620, y: PositionYBoss)
                     .onAppear {
 //                        var secondo:Double=1
                         for i in 0...100{
                             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(i)){
 //                                positionXBackground+=10
-                                positionXNemico-=passo
+                                PositionYBoss = PositionYBoss == 200 ? 180 : 200
                                 //positionXCanguro+=10
                             }
                         }
                     }
-                    .onChange(of: positionXNemico){
-                        newValue in positionXNemico
-                        if(positionXNemico<0 && NumeroNemici>0){
-                            NumeroNemici-=1
-                            positionXCanguro-=200
-                            positionXNemico=1000+positionXBackground
-                        }
-                        
-                        print(positionXNemico-positionXCanguro)
-                        if(((positionXNemico-positionXCanguro)<100 && (positionXNemico-positionXCanguro) > -20)&&((positionYNemico-positionYCanguro) == 0))
-                        {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
-                                Sconfitta()
-                            }
-                        }
-                        if(NumeroNemici==0){
-                            Vittoria()
-                        }
-
-                    }
+                    
         
                   
                     
@@ -160,7 +138,6 @@ struct Scena: View{
                            }
                            if(OpacityKangooJ==0){
                                positionXBackground-=passo
-                               positionXNemico-=passo
                            }
                            if(positionXBackground<200)
                            {
