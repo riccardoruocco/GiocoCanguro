@@ -4,7 +4,13 @@
         <page name='1. Intro'/>
         <page name='2. Gameplay'/>
         <page name='3. Boss Fight'/>
+<<<<<<< HEAD
         <page name='4. (Happy) Ending'/>
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> f264be1261650f0ee11879132d71a639e22b467b
         <page name='FULL'/>
+>>>>>>> 8c0e5506db2a8d38b1464b6a126316cb60eaf1c1
     </pages>
 </playground>
