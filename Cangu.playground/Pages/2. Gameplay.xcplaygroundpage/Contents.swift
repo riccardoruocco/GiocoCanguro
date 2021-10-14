@@ -153,7 +153,9 @@ struct Scena: View{
                         print(positionXNemico-positionXCanguro)
                         if(((positionXNemico-positionXCanguro)<100 && (positionXNemico-positionXCanguro) > -20)&&((positionYNemico-positionYCanguro) == 0))
                         {
-                            Sconfitta()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                Sconfitta()
+                            }
                         }
                         if(NumeroNemici==0){
                             Vittoria()
