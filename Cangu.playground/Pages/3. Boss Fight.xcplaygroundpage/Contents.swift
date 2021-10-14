@@ -81,6 +81,26 @@ struct Scena: View{
                         }
                     }
             
+                    Image(uiImage: UIImage(named: "kangooP1")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 100, alignment: .center)
+                    .position(x: positionXCanguro, y: positionYCanguro)
+                    .opacity(OpacityKangooP1)
+                    .onChange(of: OpacityKangooP1){
+                        newValue in OpacityKangooP1
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(1500)){
+                                OpacityKangooP1=0
+                                OpacityKangooS=1
+                        }
+                    }
+                    
+                    Image(uiImage: UIImage(named: "kangooP2")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 100, alignment: .center)
+                    .position(x: positionXCanguro, y: positionYCanguro)
+                    .opacity(OpacityKangooP2)
             
                     Image(uiImage: UIImage(named: "soldato")!)
                     .resizable()
@@ -163,6 +183,20 @@ struct Scena: View{
                                OpacityKangooS=1
                                OpacityKangooJ=0
                            }
+                       }
+                       .buttonStyle(.borderedProminent)
+                       Button("Punch"){
+                           if(OpacityKangooS==1)
+                           {
+                               OpacityKangooS=0
+                               OpacityKangooP1=1
+                               
+                           }
+                           else if(OpacityKangooP1==1){
+                               OpacityKangooP1=0
+                               OpacityKangooS=1
+                           }
+                         
                        }
                        .buttonStyle(.borderedProminent)
 
