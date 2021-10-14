@@ -131,7 +131,7 @@ struct Intro1:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 510, y: 700)
+                .position(x: 400, y: 600)
             /*Button("⇦ ",action:Prev0) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -219,7 +219,7 @@ struct Intro2:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 510, y: 700)
+                .position(x: 300, y: 200)
             Button("⇦",action:Prev1) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
