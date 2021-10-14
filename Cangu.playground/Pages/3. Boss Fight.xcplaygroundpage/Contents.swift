@@ -48,6 +48,7 @@ struct Scena: View{
         @State var isTazzinaGoing = false
         @State var numTazzine = Int.random(in: 2...3)
         @State var ReginaOnTheFloor = false
+        @State var ReginaHealth = 2
     
         let passo:CGFloat=70
     
@@ -88,6 +89,7 @@ struct Scena: View{
                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(600)){
                                 OpacityKangooJ=0
                                 OpacityKangooS=1
+                                positionYCanguro = 475
                         }
                     }
             
@@ -101,8 +103,15 @@ struct Scena: View{
                         newValue in
                         if (isTazzinaGoing) {
                             OpacityTazzina = 1
-                            PositionXTazzina -= 95
-                            PositionYTazzina += 90
+                            PositionXTazzina -= 85
+                            PositionYTazzina += 80
+                        
+                            // 110.0 100.0 520.0 325.0
+                            if (PositionXTazzina == 110.0 &&  PositionYTazzina == 520.0 && positionYCanguro == 475.0) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                    Sconfitta()
+                                }
+                            }
                             if (PositionXTazzina < 0 && PositionYTazzina > 650) {
                                 isTazzinaGoing = false
                                 numTazzine -= 1
@@ -198,14 +207,11 @@ struct Scena: View{
                                }
                                
                            }
-                          
-                           
-                           
-                        
-                           
+  
                        }
                        .buttonStyle(.borderedProminent)
                        Button("Jump"){
+                           positionYCanguro -= 100
                            if(OpacityKangooS==1 || OpacityKangooW==1 || OpacityKangooP1==1){
                                OpacityKangooS=0
                                OpacityKangooW=0
@@ -231,10 +237,19 @@ struct Scena: View{
                                OpacityKangooS=1
                            }
                            if (!(ReginaOnTheFloor && positionXCanguro + 130 <= PositionXBoss)) {
-                               ReginaOnTheFloor = false
-                               positionXCanguro = 100
-                               PositionYBoss = INITIAL_Y_BOSS
-                               numTazzine = Int.random(in: 2...3)
+                               DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                   ReginaHealth -= 1
+                                   if (ReginaHealth == 0) {
+                                       Vittoria()
+                                   } else {
+                                       ReginaOnTheFloor = false
+                                       positionXCanguro = 100
+                                       PositionYBoss = INITIAL_Y_BOSS
+                                       numTazzine = Int.random(in: 2...3)
+                                   }
+                                   
+                               }
+                               
                            }
                          
                        }
