@@ -3,5 +3,6 @@
     <pages>
         <page name='1. Intro'/>
         <page name='2. Gameplay'/>
+        <page name='3. Boss Fight'/>
     </pages>
 </playground>

@@ -22,8 +22,11 @@ func playSound(_ fileName : String) {
         print(error.localizedDescription)
     }
 }
+let INITIAL_Y_BOSS: Double = 200
+let INITIAL_X_BOSS: Double = 450
 
 struct Scena: View{
+    
     
         @State  var positionXCanguro: CGFloat = 100
         @State  var positionYCanguro: CGFloat = 475
@@ -34,10 +37,15 @@ struct Scena: View{
         @State  var OpacityKangooJ:Double=0
         @State  var OpacityKangooP1:Double=0
         @State  var OpacityKangooP2:Double=0
-        @State var OpacityPerso:Double=0
-        @State var PositionYBoss:Double=200
-
-        @State var isAlive=true
+        @State  var OpacityTazzina:Double=0
+        @State var OpacityPerso: Double=0
+        @State var PositionYBoss: Double = INITIAL_Y_BOSS
+        @State var PositionXBoss: Double = INITIAL_X_BOSS
+        @State var PositionXTazzina: Double = INITIAL_X_BOSS;
+        @State var PositionYTazzina: Double = INITIAL_Y_BOSS;
+        @State var frameChange = false
+        @State var isAlive = true
+        @State var isTazzinaGoing = true
     
         let passo:CGFloat=70
     
@@ -80,6 +88,22 @@ struct Scena: View{
                         }
                     }
             
+                    Image(uiImage: UIImage(named: "tazzina")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50, alignment: .center)
+                    .position(x: PositionXTazzina, y: PositionYTazzina)
+                    .opacity(OpacityTazzina)
+                    .onChange(of: frameChange){
+                        newValue in
+                        if (isTazzinaGoing) {
+                            OpacityTazzina = 1
+                            PositionXTazzina -= 80
+                            PositionYTazzina += 80
+                        }
+                    }
+                   
+            
                     Image(uiImage: UIImage(named: "kangooP1")!)
                     .resizable()
                     .scaledToFill()
@@ -105,12 +129,13 @@ struct Scena: View{
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 100, alignment: .center)
-                    .position(x: 450, y: PositionYBoss)
+                    .position(x: PositionXBoss, y: PositionYBoss)
                     .onAppear {
 //                        var secondo:Double=1
                         for i in 0...100{
                             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(i)){
 //                                positionXBackground+=10
+                                frameChange = !frameChange
                                 PositionYBoss = PositionYBoss == 200 ? 180 : 200
                                 //positionXCanguro+=10
                             }
