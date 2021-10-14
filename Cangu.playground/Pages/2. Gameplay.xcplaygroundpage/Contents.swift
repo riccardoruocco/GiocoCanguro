@@ -388,7 +388,7 @@ struct SchermataVittoria:View{
                 .opacity(0.5)
         }
         .onAppear(perform: {
-            playSound("intro.mp3")
+            playSound("sound.mp3")
         })
     }
 }

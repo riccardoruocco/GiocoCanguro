@@ -295,23 +295,75 @@ struct SchermataSconfitta:View{
     }
 }
 
+//HAI VINTO
 struct SchermataVittoria:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
     @State var OpacityVinto:Double=1
     var body: some View{
         ZStack{
-            Text("")
-                .frame(width: 768, height:1024,
-                       alignment: .center)
-                .background(.gray)
-                .opacity(OpacityVinto)
-                Button("Vinto"){
-//                Vittoria()
+            //Background
+            Image(uiImage: UIImage(named: "bg2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Objects
+            Image(uiImage: UIImage(named: "win")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 550, height: 100, alignment: .center)
+                .offset(y:85)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1.5)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .position(x: 400, y: 400)
+            
+            //Text
+            Image(uiImage: UIImage(named: "text-win")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 250, height: 100, alignment: .center)
+                .offset(y: -235)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1.5)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
         }
+        .onAppear(perform: {
+            playSound("sound.mp3")
+        })
     }
 }
+
 var Inizio:Scena=Scena()
  
 func Sconfitta(){
