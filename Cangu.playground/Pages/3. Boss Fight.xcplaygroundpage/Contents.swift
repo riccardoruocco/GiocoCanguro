@@ -45,12 +45,17 @@ struct Scena: View{
         @State var PositionYTazzina: Double = INITIAL_Y_BOSS;
         @State var frameChange = false
         @State var isAlive = true
-        @State var isTazzinaGoing = true
+        @State var isTazzinaGoing = false
+        @State var numTazzine = Int.random(in: 2...3)
+        @State var ReginaOnTheFloor = false
+        @State var ReginaHealth = 2
     
         let passo:CGFloat=70
     
     
+  
     var body: some View{
+        
         ZStack{
                Image(uiImage: UIImage(named: "sunset2")!)
                    .resizable()
@@ -77,14 +82,14 @@ struct Scena: View{
                     .resizable()
                     .scaledToFill()
                     .frame(width: 50, height: 100, alignment: .center)
-                    .position(x: positionXCanguro+2*passo, y: positionYCanguro-150)
+                    .position(x: positionXCanguro, y: positionYCanguro-150)
                     .opacity(OpacityKangooJ)
                     .onChange(of: OpacityKangooJ){
                         newValue in OpacityKangooJ
-                        positionXCanguro+=passo
                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(600)){
                                 OpacityKangooJ=0
                                 OpacityKangooS=1
+                                positionYCanguro = 475
                         }
                     }
             
@@ -98,8 +103,24 @@ struct Scena: View{
                         newValue in
                         if (isTazzinaGoing) {
                             OpacityTazzina = 1
-                            PositionXTazzina -= 80
+                            PositionXTazzina -= 85
                             PositionYTazzina += 80
+                        
+                            // 110.0 100.0 520.0 325.0
+                            if (PositionXTazzina == 110.0 &&  PositionYTazzina == 520.0 && positionYCanguro == 475.0) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                    Sconfitta()
+                                }
+                            }
+                            if (PositionXTazzina < 0 && PositionYTazzina > 650) {
+                                isTazzinaGoing = false
+                                numTazzine -= 1
+                                if (numTazzine < 0) {
+                                    print("Regina on the floor")
+                                    ReginaOnTheFloor = true
+                                    PositionYBoss = 400
+                                }
+                            }
                         }
                     }
                    
@@ -132,17 +153,27 @@ struct Scena: View{
                     .position(x: PositionXBoss, y: PositionYBoss)
                     .onAppear {
 //                        var secondo:Double=1
-                        for i in 0...100{
+                        for i in 0...10000{
                             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(i)){
 //                                positionXBackground+=10
                                 frameChange = !frameChange
-                                PositionYBoss = PositionYBoss == 200 ? 180 : 200
+                                if (!ReginaOnTheFloor) {
+                               
+                                    PositionYBoss = PositionYBoss == INITIAL_Y_BOSS ? INITIAL_Y_BOSS - 20 : INITIAL_Y_BOSS
+                                }
                                 //positionXCanguro+=10
                             }
                         }
+                        Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) {_ in
+                            if (!isTazzinaGoing && !ReginaOnTheFloor) {
+                                PositionXTazzina = INITIAL_X_BOSS;
+                                PositionYTazzina = INITIAL_Y_BOSS;
+                                isTazzinaGoing = true
+                            }
+                        }
+
                     }
                     
-        
                   
                     
            
@@ -153,28 +184,34 @@ struct Scena: View{
                    Spacer()
                    HStack(spacing:20){
                        Button("Walk"){
-                          
-                           if(OpacityKangooS==1 && OpacityKangooJ==0){
-                               OpacityKangooS=0
-                               OpacityKangooW=1
-                           }
-                           else if(OpacityKangooJ==0){
-                               OpacityKangooS=1
-                               OpacityKangooW=0
-                           }
-                           if(OpacityKangooJ==0){
-                               positionXBackground-=passo
-                           }
-                           if(positionXBackground<200)
-                           {
-                               positionXBackground+=100
+                           
+                           if (ReginaOnTheFloor && positionXCanguro + 130 <= PositionXBoss) {
+                               positionXCanguro += passo
                            }
                            
-                        
-                           
+                           if (!ReginaOnTheFloor) {
+                               if(OpacityKangooJ==0){
+                                   positionXBackground-=passo
+                               }
+                               if(positionXBackground<200)
+                               {
+                                   positionXBackground+=100
+                               }
+                               if(OpacityKangooS==1 && OpacityKangooJ==0){
+                                   OpacityKangooS=0
+                                   OpacityKangooW=1
+                               }
+                               else if(OpacityKangooJ==0){
+                                   OpacityKangooS=1
+                                   OpacityKangooW=0
+                               }
+                               
+                           }
+  
                        }
                        .buttonStyle(.borderedProminent)
                        Button("Jump"){
+                           positionYCanguro -= 100
                            if(OpacityKangooS==1 || OpacityKangooW==1 || OpacityKangooP1==1){
                                OpacityKangooS=0
                                OpacityKangooW=0
@@ -198,6 +235,21 @@ struct Scena: View{
                            else if(OpacityKangooP1==1){
                                OpacityKangooP1=0
                                OpacityKangooS=1
+                           }
+                           if (!(ReginaOnTheFloor && positionXCanguro + 130 <= PositionXBoss)) {
+                               DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                   ReginaHealth -= 1
+                                   if (ReginaHealth == 0) {
+                                       Vittoria()
+                                   } else {
+                                       ReginaOnTheFloor = false
+                                       positionXCanguro = 100
+                                       PositionYBoss = INITIAL_Y_BOSS
+                                       numTazzine = Int.random(in: 2...3)
+                                   }
+                                   
+                               }
+                               
                            }
                          
                        }
