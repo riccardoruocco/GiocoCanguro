@@ -231,6 +231,27 @@ struct Scena: View{
                    Spacer()
                    
                }
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
                
                   
                    
