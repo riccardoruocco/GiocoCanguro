@@ -23,6 +23,30 @@ func playSound(_ fileName : String) {
     }
 }
 
+extension UIImage {
+    func rotate(radians: Float) -> UIImage? {
+        var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size
+        // Trim off the extremely small float value to prevent core graphics from rounding it up
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, self.scale)
+        let context = UIGraphicsGetCurrentContext()!
+
+        // Move origin to middle
+        context.translateBy(x: newSize.width/2, y: newSize.height/2)
+        // Rotate around middle
+        context.rotate(by: CGFloat(radians))
+        // Draw the image at its center
+        self.draw(in: CGRect(x: -self.size.width/2, y: -self.size.height/2, width: self.size.width, height: self.size.height))
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+}
+
 struct Scena: View{
     
         @State  var positionXCanguro: CGFloat = 250
@@ -58,6 +82,14 @@ struct Scena: View{
                        .frame(width: 50, height: 100, alignment: .center)
                        .position(x: positionXCanguro, y:positionYCanguro)
                        .opacity(OpacityKangooS)
+            
+            Image(uiImage: UIImage(named: "KangooS")!)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 50, height: 100, alignment: .center)
+                        .position(x: positionXCanguro, y:positionYCanguro)
+                        .opacity(OpacityPerso)
+                        
             
                     Image(uiImage: UIImage(named: "kangooWalk")!)
                     .resizable()
@@ -125,10 +157,15 @@ struct Scena: View{
                             positionXCanguro-=200
                             positionXNemico=1000+positionXBackground
                         }
-                        if(((abs(positionXNemico-positionXCanguro))<20)&&((abs(positionYNemico-positionYCanguro))<10))
+                        
+                        print(positionXNemico-positionXCanguro)
+                        if(((positionXNemico-positionXCanguro)<100 && (positionXNemico-positionXCanguro) > -20)&&((positionYNemico-positionYCanguro) == 0))
                         {
-                     
-                            Sconfitta()
+                            OpacityKangooW = 0
+                            OpacityPerso = 1
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+                                Sconfitta()
+                            }
                         }
                         if(NumeroNemici==0){
                             Vittoria()
