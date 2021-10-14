@@ -23,6 +23,30 @@ func playSound(_ fileName : String) {
     }
 }
 
+extension UIImage {
+    func rotate(radians: Float) -> UIImage? {
+        var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size
+        // Trim off the extremely small float value to prevent core graphics from rounding it up
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, self.scale)
+        let context = UIGraphicsGetCurrentContext()!
+
+        // Move origin to middle
+        context.translateBy(x: newSize.width/2, y: newSize.height/2)
+        // Rotate around middle
+        context.rotate(by: CGFloat(radians))
+        // Draw the image at its center
+        self.draw(in: CGRect(x: -self.size.width/2, y: -self.size.height/2, width: self.size.width, height: self.size.height))
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
+    }
+}
+
 struct Scena: View{
     
         @State  var positionXCanguro: CGFloat = 250
@@ -49,7 +73,7 @@ struct Scena: View{
                Image(uiImage: UIImage(named: "sunset")!)
                    .resizable()
                    .scaledToFill()
-                   .frame(width: 561, height: 748, alignment: .center)
+                   .frame(width: 768, height: 1024, alignment: .center)
                    .position(x: positionXBackground, y: positionYBackground)
                 
                    Image(uiImage: UIImage(named: "KangooS")!)
@@ -125,10 +149,12 @@ struct Scena: View{
                             positionXCanguro-=200
                             positionXNemico=1000+positionXBackground
                         }
-                        if(((abs(positionXNemico-positionXCanguro))<20)&&((abs(positionYNemico-positionYCanguro))<10))
+                        
+                        if(((positionXNemico-positionXCanguro)<100 && (positionXNemico-positionXCanguro) > -20)&&((positionYNemico-positionYCanguro) == 0))
                         {
-                     
-                            Sconfitta()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                Sconfitta()
+                            }
                         }
                         if(NumeroNemici==0){
                             Vittoria()
@@ -213,7 +239,85 @@ struct Scena: View{
         })
     }
 }
+//HAI PERSO
 struct SchermataSconfitta:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    @State var OpacityPerso:Double=1
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "bg2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Objects
+            Image(uiImage: UIImage(named: "lose")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 550, height: 100, alignment: .center)
+                .offset(y:85)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1.5)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Text
+            Image(uiImage: UIImage(named: "text-lose")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 250, height: 100, alignment: .center)
+                .offset(y: -235)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1.5)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            Button("PLAY AGAIN"){
+                Rigioca()
+            }
+            .frame(width: 250, height: 75, alignment: .center)
+            .foregroundColor(.white)
+            .background(.black)
+            .font(.system(size: 30, weight: .bold))
+            .cornerRadius(7.5)
+            .padding(35)
+            .offset(y: 220)
+            
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+        .onAppear(perform: {
+            playSound("intro.mp3")
+        })
+    }
+}
+/*struct SchermataSconfitta:View{
     @State var OpacityPerso:Double=1
     var body: some View{
         ZStack{
@@ -229,8 +333,76 @@ struct SchermataSconfitta:View{
                 .position(x: 400, y: 400)
         }
     }
-}
+}*/
+//HAI VINTO
 struct SchermataVittoria:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    @State var OpacityVinto:Double=1
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "bg2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Objects
+            Image(uiImage: UIImage(named: "win")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 550, height: 100, alignment: .center)
+                .offset(y:85)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1.5)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Text
+            Image(uiImage: UIImage(named: "text-win")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 250, height: 100, alignment: .center)
+                .offset(y: -235)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1.5)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+        .onAppear(perform: {
+            playSound("intro.mp3")
+        })
+    }
+}
+/*struct SchermataVittoria:View{
     @State var OpacityVinto:Double=1
     var body: some View{
         ZStack{
@@ -246,7 +418,7 @@ struct SchermataVittoria:View{
                 .position(x: 400, y: 400)
         }
     }
-}
+}*/
 var Inizio:Scena=Scena()
  
 func Sconfitta(){
