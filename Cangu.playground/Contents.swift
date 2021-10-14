@@ -98,6 +98,7 @@ struct Scena: View{
                         }
                     }
                     .onChange(of: positionXNemico){
+                        print("A")
                         newValue in positionXNemico
                         if(positionXNemico<0 && NumeroNemici>0){
                             NumeroNemici-=1
