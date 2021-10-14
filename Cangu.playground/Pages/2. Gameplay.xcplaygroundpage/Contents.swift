@@ -150,7 +150,6 @@ struct Scena: View{
                             positionXNemico=1000+positionXBackground
                         }
                         
-                        print(positionXNemico-positionXCanguro)
                         if(((positionXNemico-positionXCanguro)<100 && (positionXNemico-positionXCanguro) > -20)&&((positionYNemico-positionYCanguro) == 0))
                         {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
