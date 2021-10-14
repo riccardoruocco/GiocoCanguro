@@ -49,7 +49,7 @@ struct Scena: View{
                Image(uiImage: UIImage(named: "sunset")!)
                    .resizable()
                    .scaledToFill()
-                   .frame(width: 768, height: 1024, alignment: .center)
+                   .frame(width: 561, height: 748, alignment: .center)
                    .position(x: positionXBackground, y: positionYBackground)
                 
                    Image(uiImage: UIImage(named: "KangooS")!)
@@ -218,7 +218,7 @@ struct SchermataSconfitta:View{
     var body: some View{
         ZStack{
             Text("")
-                .frame(width: 768, height:1024,
+                .frame(width: 561, height:748,
                        alignment: .center)
                 .background(.gray)
                 .opacity(OpacityPerso)
@@ -235,7 +235,7 @@ struct SchermataVittoria:View{
     var body: some View{
         ZStack{
             Text("")
-                .frame(width: 768, height:1024,
+                .frame(width: 561, height:748,
                        alignment: .center)
                 .background(.gray)
                 .opacity(OpacityVinto)
