@@ -3,5 +3,9 @@
     <pages>
         <page name='1. Intro'/>
         <page name='2. Gameplay'/>
+<<<<<<< HEAD
+=======
+        <page name='3. Boss Fight'/>
+>>>>>>> 483af57f855ee178d5d8e7b25dcbfdc83b7b6a35
     </pages>
 </playground>
