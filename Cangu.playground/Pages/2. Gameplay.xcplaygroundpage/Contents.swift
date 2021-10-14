@@ -83,14 +83,6 @@ struct Scena: View{
                        .position(x: positionXCanguro, y:positionYCanguro)
                        .opacity(OpacityKangooS)
             
-            Image(uiImage: UIImage(named: "KangooS")!)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 50, height: 100, alignment: .center)
-                        .position(x: positionXCanguro, y:positionYCanguro)
-                        .opacity(OpacityPerso)
-                        
-            
                     Image(uiImage: UIImage(named: "kangooWalk")!)
                     .resizable()
                     .scaledToFill()
@@ -161,11 +153,7 @@ struct Scena: View{
                         print(positionXNemico-positionXCanguro)
                         if(((positionXNemico-positionXCanguro)<100 && (positionXNemico-positionXCanguro) > -20)&&((positionYNemico-positionYCanguro) == 0))
                         {
-                            OpacityKangooW = 0
-                            OpacityPerso = 1
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-                                Sconfitta()
-                            }
+                            Sconfitta()
                         }
                         if(NumeroNemici==0){
                             Vittoria()
