@@ -49,7 +49,7 @@ struct Scena: View{
                     .resizable()
                     .scaledToFill()
                     .frame(width: 50, height: 100, alignment: .center)
-                    .position(x: positionXCanguro+passo, y: positionYCanguro-150)
+                    .position(x: positionXCanguro+2*passo, y: positionYCanguro-150)
                     .opacity(OpacityKangooJ)
                     .onChange(of: OpacityKangooJ){
                         newValue in OpacityKangooJ
@@ -91,9 +91,9 @@ struct Scena: View{
 //                        var secondo:Double=1
                         for i in 0...100{
                             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(i)){
-                                positionXBackground+=10
+//                                positionXBackground+=10
                                 positionXNemico-=passo
-                                positionXCanguro+=10
+                                //positionXCanguro+=10
                             }
                         }
                     }
@@ -101,21 +101,18 @@ struct Scena: View{
                         newValue in positionXNemico
                         if(positionXNemico<0 && NumeroNemici>0){
                             NumeroNemici-=1
+                            positionXCanguro-=200
                             positionXNemico=1000+positionXBackground
                         }
-                        print(positionXNemico)
-                        print(positionXCanguro)
-                        print(positionYNemico)
-                        print(positionYCanguro)
-                        print(" ")
-                        if(((abs(positionXNemico-positionXCanguro))<70)&&((abs(positionYNemico-positionYCanguro))<70))
+                        if(((abs(positionXNemico-positionXCanguro))<20)&&((abs(positionYNemico-positionYCanguro))<10))
                         {
-                            print(positionXNemico)
-                            print(positionXCanguro)
-                            print(positionYNemico)
-                            print(positionYCanguro)
+                     
                             Sconfitta()
                         }
+                        if(NumeroNemici==0){
+                            Vittoria()
+                        }
+
                     }
         
                   
@@ -210,7 +207,23 @@ struct SchermataSconfitta:View{
         }
     }
 }
-
+struct SchermataVittoria:View{
+    @State var OpacityVinto:Double=1
+    var body: some View{
+        ZStack{
+            Text("")
+                .frame(width: 768, height:1024,
+                       alignment: .center)
+                .background(.gray)
+                .opacity(OpacityVinto)
+                Button("Vinto"){
+//                Vittoria()
+                }
+                .buttonStyle(.borderedProminent)
+                .position(x: 400, y: 400)
+        }
+    }
+}
 var Inizio:Scena=Scena()
  
 func Sconfitta(){
@@ -219,6 +232,9 @@ func Sconfitta(){
 }
 func Rigioca(){
     PlaygroundPage.current.setLiveView(Scena())
+}
+func Vittoria(){
+    PlaygroundPage.current.setLiveView(SchermataVittoria())
 }
 
 
