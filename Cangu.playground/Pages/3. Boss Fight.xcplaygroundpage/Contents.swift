@@ -25,7 +25,7 @@ func playSound(_ fileName : String) {
 let INITIAL_Y_BOSS: Double = 200
 let INITIAL_X_BOSS: Double = 450
 
-struct Scena: View{
+struct BattleBoss: View{
     
     
         @State  var positionXCanguro: CGFloat = 100
@@ -441,21 +441,20 @@ struct SchermataVittoria:View{
     }
 }
 
-var Inizio:Scena=Scena()
  
 func Sconfitta(){
     PlaygroundPage.current.setLiveView(SchermataSconfitta())
 
 }
 func Rigioca(){
-    PlaygroundPage.current.setLiveView(Scena())
+    PlaygroundPage.current.setLiveView(BattleBoss())
 }
 func Vittoria(){
     PlaygroundPage.current.setLiveView(SchermataVittoria())
 }
 
 
-PlaygroundPage.current.setLiveView(Inizio)
+PlaygroundPage.current.setLiveView(BattleBoss())
 
 //: [Next](@next)
 

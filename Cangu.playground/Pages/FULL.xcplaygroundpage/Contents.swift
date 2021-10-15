@@ -131,7 +131,7 @@ struct Intro1:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 400, y: 600)
+                .position(x: 510, y: 700)
             /*Button("⇦ ",action:Prev0) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -219,7 +219,7 @@ struct Intro2:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 300, y: 200)
+                .position(x: 510, y: 700)
             Button("⇦",action:Prev1) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -500,7 +500,6 @@ func FIGHT(){ //mostra un'altra view
 
 func Sconfitta(){
     PlaygroundPage.current.setLiveView(SchermataSconfitta())
-
 }
 func Rigioca(){
     PlaygroundPage.current.setLiveView(Battle())
@@ -793,15 +792,21 @@ struct SchermataSconfitta:View{
         })
     }
 }
-
+func SconfittaBoss(){
+    PlaygroundPage.current.setLiveView(SchermataSconfittaBoss())
+}
 func RigiocaBoss(){
     PlaygroundPage.current.setLiveView(BattleBoss())
 }
 func VittoriaBoss(){
-    PlaygroundPage.current.setLiveView(SchermataVittoria())
+    PlaygroundPage.current.setLiveView(Win())
 }
 
+let INITIAL_Y_BOSS: Double = 200
+let INITIAL_X_BOSS: Double = 450
+
 struct BattleBoss: View{
+    
     
         @State  var positionXCanguro: CGFloat = 100
         @State  var positionYCanguro: CGFloat = 475
@@ -812,15 +817,25 @@ struct BattleBoss: View{
         @State  var OpacityKangooJ:Double=0
         @State  var OpacityKangooP1:Double=0
         @State  var OpacityKangooP2:Double=0
-        @State var OpacityPerso:Double=0
-        @State var PositionYBoss:Double=200
-
-        @State var isAlive=true
+        @State  var OpacityTazzina:Double=0
+        @State var OpacityPerso: Double=0
+        @State var PositionYBoss: Double = INITIAL_Y_BOSS
+        @State var PositionXBoss: Double = INITIAL_X_BOSS
+        @State var PositionXTazzina: Double = INITIAL_X_BOSS;
+        @State var PositionYTazzina: Double = INITIAL_Y_BOSS;
+        @State var frameChange = false
+        @State var isAlive = true
+        @State var isTazzinaGoing = false
+        @State var numTazzine = Int.random(in: 2...3)
+        @State var ReginaOnTheFloor = false
+        @State var ReginaHealth = 2
     
         let passo:CGFloat=70
     
     
+  
     var body: some View{
+        
         ZStack{
                Image(uiImage: UIImage(named: "sunset2")!)
                    .resizable()
@@ -847,16 +862,48 @@ struct BattleBoss: View{
                     .resizable()
                     .scaledToFill()
                     .frame(width: 50, height: 100, alignment: .center)
-                    .position(x: positionXCanguro+2*passo, y: positionYCanguro-150)
+                    .position(x: positionXCanguro, y: positionYCanguro-150)
                     .opacity(OpacityKangooJ)
                     .onChange(of: OpacityKangooJ){
                         newValue in OpacityKangooJ
-                        positionXCanguro+=passo
                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.milliseconds(600)){
                                 OpacityKangooJ=0
                                 OpacityKangooS=1
+                                positionYCanguro = 475
                         }
                     }
+            
+                    Image(uiImage: UIImage(named: "tazzina")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50, alignment: .center)
+                    .position(x: PositionXTazzina, y: PositionYTazzina)
+                    .opacity(OpacityTazzina)
+                    .onChange(of: frameChange){
+                        newValue in
+                        if (isTazzinaGoing) {
+                            OpacityTazzina = 1
+                            PositionXTazzina -= 85
+                            PositionYTazzina += 80
+                        
+                            // 110.0 100.0 520.0 325.0
+                            if (PositionXTazzina == 110.0 &&  PositionYTazzina == 520.0 && positionYCanguro == 475.0) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                    Sconfitta()
+                                }
+                            }
+                            if (PositionXTazzina < 0 && PositionYTazzina > 650) {
+                                isTazzinaGoing = false
+                                numTazzine -= 1
+                                if (numTazzine < 0) {
+                                    print("Regina on the floor")
+                                    ReginaOnTheFloor = true
+                                    PositionYBoss = 400
+                                }
+                            }
+                        }
+                    }
+                   
             
                     Image(uiImage: UIImage(named: "kangooP1")!)
                     .resizable()
@@ -883,19 +930,30 @@ struct BattleBoss: View{
                     .resizable()
                     .scaledToFill()
                     .frame(width: 100, height: 100, alignment: .center)
-                    .position(x: 450, y: PositionYBoss)
+                    .position(x: PositionXBoss, y: PositionYBoss)
                     .onAppear {
 //                        var secondo:Double=1
-                        for i in 0...100{
+                        for i in 0...10000{
                             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(i)){
 //                                positionXBackground+=10
-                                PositionYBoss = PositionYBoss == 200 ? 180 : 200
+                                frameChange = !frameChange
+                                if (!ReginaOnTheFloor) {
+                               
+                                    PositionYBoss = PositionYBoss == INITIAL_Y_BOSS ? INITIAL_Y_BOSS - 20 : INITIAL_Y_BOSS
+                                }
                                 //positionXCanguro+=10
                             }
                         }
+                        Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) {_ in
+                            if (!isTazzinaGoing && !ReginaOnTheFloor) {
+                                PositionXTazzina = INITIAL_X_BOSS;
+                                PositionYTazzina = INITIAL_Y_BOSS;
+                                isTazzinaGoing = true
+                            }
+                        }
+
                     }
                     
-        
                   
                     
            
@@ -906,28 +964,34 @@ struct BattleBoss: View{
                    Spacer()
                    HStack(spacing:20){
                        Button("Walk"){
-                          
-                           if(OpacityKangooS==1 && OpacityKangooJ==0){
-                               OpacityKangooS=0
-                               OpacityKangooW=1
-                           }
-                           else if(OpacityKangooJ==0){
-                               OpacityKangooS=1
-                               OpacityKangooW=0
-                           }
-                           if(OpacityKangooJ==0){
-                               positionXBackground-=passo
-                           }
-                           if(positionXBackground<200)
-                           {
-                               positionXBackground+=100
+                           
+                           if (ReginaOnTheFloor && positionXCanguro + 130 <= PositionXBoss) {
+                               positionXCanguro += passo
                            }
                            
-                        
-                           
+                           if (!ReginaOnTheFloor) {
+                               if(OpacityKangooJ==0){
+                                   positionXBackground-=passo
+                               }
+                               if(positionXBackground<200)
+                               {
+                                   positionXBackground+=100
+                               }
+                               if(OpacityKangooS==1 && OpacityKangooJ==0){
+                                   OpacityKangooS=0
+                                   OpacityKangooW=1
+                               }
+                               else if(OpacityKangooJ==0){
+                                   OpacityKangooS=1
+                                   OpacityKangooW=0
+                               }
+                               
+                           }
+  
                        }
                        .buttonStyle(.borderedProminent)
                        Button("Jump"){
+                           positionYCanguro -= 100
                            if(OpacityKangooS==1 || OpacityKangooW==1 || OpacityKangooP1==1){
                                OpacityKangooS=0
                                OpacityKangooW=0
@@ -951,6 +1015,21 @@ struct BattleBoss: View{
                            else if(OpacityKangooP1==1){
                                OpacityKangooP1=0
                                OpacityKangooS=1
+                           }
+                           if (!(ReginaOnTheFloor && positionXCanguro + 130 <= PositionXBoss)) {
+                               DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                                   ReginaHealth -= 1
+                                   if (ReginaHealth == 0) {
+                                       Vittoria()
+                                   } else {
+                                       ReginaOnTheFloor = false
+                                       positionXCanguro = 100
+                                       PositionYBoss = INITIAL_Y_BOSS
+                                       numTazzine = Int.random(in: 2...3)
+                                   }
+                                   
+                               }
+                               
                            }
                          
                        }
@@ -1074,9 +1153,8 @@ struct SchermataSconfittaBoss:View{
     }
 }
 
-
 //HAI VINTO
-struct SchermataVittoria:View{
+struct Win:View{
     @State var Opacity1: CGFloat = 0
     @State var Opacity2: CGFloat = 1
     @State var OpacityVinto:Double=1
@@ -1115,6 +1193,15 @@ struct SchermataVittoria:View{
                         Opacity1 = 1
                     }
                 }
+            //Pulsanti
+            Button("⇨",action:NextWin1) //Next
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 510, y: 700)
             
             Button(action: {
                 if (audioPlayer?.volume == 1) {
@@ -1139,10 +1226,238 @@ struct SchermataVittoria:View{
                 .opacity(0.5)
         }
         .onAppear(perform: {
-            playSound("sound.mp3")
+            playSound("intro.mp3")
         })
     }
 }
+//Next
+func NextWin1(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win1())
+}
+
+//Finale 1
+struct Win1:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "defeat1")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Text
+            Image(uiImage: UIImage(named: "textwin1")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 420, height: 95, alignment: .center)
+                .offset(y: 200)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Pulsanti
+            Button("⇨",action:NextWin2) //Next
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 510, y: 700)
+            Button("⇦",action:PrevWin1) //Prev
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 50, y: 700)
+                .opacity(0.5)
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+    }
+}
+func PrevWin1(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win1())
+}
+//Next
+func NextWin2(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win2())
+}
+
+//Finale 2
+struct Win2:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "defeat2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Text
+            Image(uiImage: UIImage(named: "textwin2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 500, height: 100, alignment: .center)
+                .offset(y: 200)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Pulsanti
+            Button("⇨",action:NextWin3) //Next
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 510, y: 700)
+            Button("⇦",action:PrevWin2) //Prev
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 50, y: 700)
+                .opacity(0.5)
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+    }
+}
+func PrevWin2(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win2())
+}
+//Next
+func NextWin3(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win3())
+}
+
+//Finale 3
+struct Win3:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "end")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Text
+            Image(uiImage: UIImage(named: "textwin3")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 440, height: 100, alignment: .center)
+                .offset(y: -250)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Objects
+            Image(uiImage: UIImage(named: "textend")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 350, height: 100, alignment: .center)
+                .offset(y:180)
+            
+            Button("⇦",action:PrevWin2) //Prev
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 50, y: 700)
+                .opacity(0.5)
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+    }
+}
+
+//Fermati qui!!!
 
 PlaygroundPage.current.setLiveView(SplashScreen())
 
