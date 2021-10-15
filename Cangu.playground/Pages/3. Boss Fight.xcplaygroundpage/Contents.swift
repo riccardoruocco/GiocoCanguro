@@ -21,7 +21,7 @@ func playSound(_ fileName : String) {
     } catch {
         print(error.localizedDescription)
     }
-}
+}   
 let INITIAL_Y_BOSS: Double = 200
 let INITIAL_X_BOSS: Double = 450
 
