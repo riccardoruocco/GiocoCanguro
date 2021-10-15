@@ -86,7 +86,22 @@ struct SplashScreen:View{
 func Start(){ //mostra un'altra view
     PlaygroundPage.current.setLiveView(Intro1())
 }
-
+func NextWin1(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win1())
+}
+func NextWin2(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win2())
+}
+func PrevWin2(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win2())
+}
+//Next
+func NextWin3(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win3())
+}
+func PrevWin1(){ //mostra un'altra view
+    PlaygroundPage.current.setLiveView(Win1())
+}
 //Seconda Slide - Intro 1
 struct Intro1:View{
     @State var Opacity1: CGFloat = 0
@@ -131,7 +146,7 @@ struct Intro1:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 400, y: 600)
+                .position(x: 510, y: 600)
             /*Button("⇦ ",action:Prev0) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -219,7 +234,7 @@ struct Intro2:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 300, y: 200)
+                .position(x: 510, y: 600)
             Button("⇦",action:Prev1) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -227,7 +242,7 @@ struct Intro2:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 50, y: 700)
+                .position(x: 50, y: 600)
                 .opacity(0.5)
             Button(action: {
                 if (audioPlayer?.volume == 1) {
@@ -297,7 +312,7 @@ struct Intro3:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 510, y: 700)
+                .position(x: 510, y: 600)
             Button("⇦",action:Prev2) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -305,7 +320,7 @@ struct Intro3:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 50, y: 700)
+                .position(x: 50, y: 600)
                 .opacity(0.5)
             Button(action: {
                 if (audioPlayer?.volume == 1) {
@@ -375,7 +390,7 @@ struct Intro4:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 510, y: 700)
+                .position(x: 510, y: 600)
             Button("⇦",action:Prev3) //Prev
                 .frame(width: 40, height: 40, alignment: .center)
                 .foregroundColor(.white)
@@ -383,7 +398,7 @@ struct Intro4:View{
                 .font(.system(size: 24, weight: .bold))
                 .cornerRadius(100)
                 .padding(35)
-                .position(x: 50, y: 700)
+                .position(x: 50, y: 600)
                 .opacity(0.5)
             Button(action: {
                 if (audioPlayer?.volume == 1) {
@@ -1116,6 +1131,15 @@ struct SchermataVittoria:View{
                     }
                 }
             
+                Button("⇨",action:NextWin1) //Next
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 510, y: 600)
+            
             Button(action: {
                 if (audioPlayer?.volume == 1) {
                     audioPlayer?.volume = 0
@@ -1143,6 +1167,210 @@ struct SchermataVittoria:View{
         })
     }
 }
+struct Win1:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "defeat1")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Text
+            Image(uiImage: UIImage(named: "textwin1")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 420, height: 95, alignment: .center)
+                .offset(y: 200)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+//            Pulsanti
+            Button("⇨",action:NextWin2) //Next
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 510, y: 600)
+            Button("⇦",action:PrevWin1) //Prev
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 50, y: 600)
+                .opacity(0.5)
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+    }
+}
+struct Win2:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "defeat2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Text
+            Image(uiImage: UIImage(named: "textwin2")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 500, height: 100, alignment: .center)
+                .offset(y: 200)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Pulsanti
+            Button("⇨",action:NextWin3) //Next
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 510, y: 600)
+            Button("⇦",action:PrevWin2) //Prev
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 50, y: 700)
+                .opacity(0.5)
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+    }
+}
+struct Win3:View{
+    @State var Opacity1: CGFloat = 0
+    @State var Opacity2: CGFloat = 1
+    
+    var body: some View{
+        ZStack{
+            //Background
+            Image(uiImage: UIImage(named: "end")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 561, height: 748, alignment: .center)
+            
+            //Text
+            Image(uiImage: UIImage(named: "textwin3")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 440, height: 100, alignment: .center)
+                .offset(y: -250)
+                .opacity(Opacity1)
+                .onAppear{
+                    let OpacityAnimation = Animation.easeInOut(duration: 1)
+                    withAnimation (OpacityAnimation) {
+                        Opacity1 = 1
+                    }
+                }
+            
+            //Objects
+            Image(uiImage: UIImage(named: "textend")!)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 350, height: 100, alignment: .center)
+                .offset(y:180)
+            
+            Button("⇦",action:PrevWin2) //Prev
+                .frame(width: 40, height: 40, alignment: .center)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 24, weight: .bold))
+                .cornerRadius(100)
+                .padding(35)
+                .position(x: 50, y: 700)
+                .opacity(0.5)
+            Button(action: {
+                if (audioPlayer?.volume == 1) {
+                    audioPlayer?.volume = 0
+                } else {
+                    audioPlayer?.volume = 1
+                }
+            })/*PauseSoundtrack*/{
+                VStack(spacing: 5) {
+                    Image(systemName: "playpause.fill")
+                    Text("Sound")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                .padding(.top, 10)
+            }
+                .frame(width: 60, height: 75, alignment: .top)
+                .foregroundColor(.white)
+                .background(.black)
+                .font(.system(size: 20, weight: .bold))
+                .cornerRadius(7.5)
+                .offset(y: 355)
+                .opacity(0.5)
+        }
+    }
+}
+
+
 
 PlaygroundPage.current.setLiveView(SplashScreen())
 
